@@ -14,12 +14,51 @@ export default class TodoModel{
         this.listeners.forEach(listener => listener())
     }
 
+    //保存并通知
+    saveAndNotify(todos){
+        localStorage.setItem(this.STORE_KEY,JSON.stringify(todos));
+        this.todos = todos;
+        this.emit();
+    }
     //增加todo
     addTodo = (todo)=>{
         todo = Object.assign({},{id:Math.random(),completed:false},todo);
         let todos = this.todos;
         todos.push(todo);
-        localStorage.setItem(this.STORE_KEY,JSON.stringify(todos));
-        this.emit();
+        this.saveAndNotify(todos);
+    }
+
+    toggle = (id)=>{
+        let todos = this.todos;
+        todos = todos.map(todo=>{
+            if(todo.id === id){
+                todo.completed = !todo.completed;
+            }
+            return todo;
+        })
+        this.saveAndNotify(todos);
+    }
+
+    remove = (id)=>{
+        let todos = this.todos;
+        let index = todos.findIndex(todo=>todo.id === id);
+        todos.splice(index,1);
+        this.saveAndNotify(todos);
+    }
+
+    toggleAll = (event)=>{
+        let checked = event.target.checked;
+        let todos = this.todos;
+        todos = todos.map(todo=>{
+            todo.completed = checked;
+            return todo;
+        });
+        this.saveAndNotify(todos);
+    }
+
+    clearCompleted = ()=>{
+        let todos = this.todos;
+        todos = todos.filter(todo=>!todo.completed);
+        this.saveAndNotify(todos);
     }
 }
