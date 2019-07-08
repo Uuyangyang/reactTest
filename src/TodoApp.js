@@ -9,16 +9,10 @@ export default class TodoApp extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            todos:[],
             filterType:filterTypes.ALL
         };
     }
-    addTodo = (todo)=>{
-        todo = Object.assign({},{id:Date.now(),completed:false},todo);
-        let todos = this.state.todos;
-        todos.push(todo);
-        this.setState(todos);
-    }
+
     toggle = (id)=>{
         let todos = this.state.todos;
         todos = todos.map(todo=>{
@@ -53,7 +47,7 @@ export default class TodoApp extends React.Component{
         this.setState({todos});
     }
     render(){
-        let todos = this.state.todos;
+        let todos = this.props.model.todos;
         let activeTodoCount = todos.reduce((count,todo)=>count+(todo.completed?0:1),0);
         let completedTodoCount = todos.length-activeTodoCount;
         let showTodos = todos.filter((todo)=>{
@@ -87,7 +81,7 @@ export default class TodoApp extends React.Component{
                     <div className="col-md-6 col-md-offset-3">
                         <div className="panel panel-default">
                             <div className="panel-heading">
-                                <TodoHeader addTodo={this.addTodo}/>
+                                <TodoHeader addTodo={this.props.model.addTodo}/>
                             </div>
                             <div className="panel-body">
                                 {main}
